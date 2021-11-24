@@ -106,6 +106,8 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 	
 
 	// TODO refactor into a "gotCrabs" function or something
+	// TODO implement a banking system (to fix what haappens on the
+	// nested if)
 	function fulfillPassLine(address payable player) private {
 		if (diceSum == 7 || diceSum == 11) {
 			if(address(this).balance < passLineBetAmounts[player] * 2){
@@ -114,6 +116,7 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 			else {
 				player.transfer(passLineBetAmounts[player] * 2);
 			}
+			passLineBetAmounts[player] = 0;
 		} else if(diceSum == 2 || diceSum == 3 || diceSum == 12) {
 			passLineBetAmounts[player] = 0;
 		} else {
