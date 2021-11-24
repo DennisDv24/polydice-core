@@ -70,17 +70,17 @@ def deploy_testnet():
         Web3.toWei(0.001, 'ether'),
         {'from': main_acc}
     )
-    tx = polydice_game_contract.doDiceRollAndFulfillBets({'from': main_acc})
+    #tx = polydice_game_contract.doDiceRollAndFulfillBets({'from': main_acc})
 
-    tx.wait(1)
-    time.sleep(60)
-    print('FINAL RANDOM NUMBER:')
-    print(polydice_game_contract.lastRandom())
+    #tx.wait(1)
+    #time.sleep(60)
+    #print('FINAL RANDOM NUMBER:')
+    #print(polydice_game_contract.lastRandom())
 
 
 def main():
     #test_random_number()
-    #deploy_testnet()
+    deploy_testnet()
 
 
 
