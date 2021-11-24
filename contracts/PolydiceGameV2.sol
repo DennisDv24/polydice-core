@@ -18,6 +18,8 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 
 	uint256 public fee;	
 	bytes32 public keyhash;
+		
+	event RequestedRandomness(bytes32 requestId);
 
 	constructor(
 		address _vrfCoordinator,
@@ -37,6 +39,7 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 
 	function doDiceRollAndFulfillBets() public {
 		bytes32 requestId = requestRandomness(keyhash, fee);
+		emit RequestedRandomness(requestId);
 	}
 
 	function fulfillRandomness(

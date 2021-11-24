@@ -60,9 +60,10 @@ def get_contract_from_config(contract_name):
 def fund_with_link(contract_address,
                    account=None,
                    link_token=None,
-                   amount=10**14):
+                   amount=None):
     if not account: account = get_account()
     if not link_token: link_token = get_contract_from_config('link_token')
+    if not amount: amount = config['networks'][network.show_active()]['fee']
     print('\n-------')
     print('LINK TOKEN CONTRACT: ', link_token)
     print('ACCOUNG THAT WILL SEND 0.0001 LINK TO IT: ', account)
@@ -77,24 +78,6 @@ def fund_with_link(contract_address,
     print('-------------------------\n')
     return tx
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
