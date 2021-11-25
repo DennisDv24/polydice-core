@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 // First realease with all the functionalitiy but without the
 // game control automatization.
 
-contract PolydiceGameV2 is VRFConsumerBase, Ownable {
+contract PolydiceGame is VRFConsumerBase, Ownable {
 	
 	mapping(address => uint256) public passLineBetAmounts;
 	address payable[] public passLinePlayers;
@@ -63,27 +63,50 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 		currentPlayers++;
 	}
 
-	function doDiceRollAndFulfillBets() public {
+	function doDiceRolls() public {
 		// TODO if youre waiting for other random number from chainlink you
 		// cant roll the dices again
+		require(betsCanBeFulfilled(), "The bank doesn't have enough money");
 		bytes32 requestId = requestRandomness(keyhash, fee);
 		emit RequestedRandomness(requestId);
 	}
 
+	function betsCanBeFulfilled() public returns(bool) {
+		// based on the game rules,
+		// for example, if a player can make an 2x
+		// and the bank doenst have 1x his value,
+		// then the bets can't be fulfilled
+		return true;
+	}
+	
+
+	// In local you can just call this function with
+	// an non random '_randomness', because in local
+	// or in forks the random numbers wont work.
 	function fulfillRandomness(
 		bytes32 _requestId,
 		uint256 _randomness
 	) internal override {
-		if(_randomness == lastRandom || _randomness == 0) {
+		checkIfTheBetsCanFulfill(_randomness);
+		updateRandomNumber(_randomness);
+		calcDiceValues();
+		fulfillBets();
+	}
+
+	function checkIfTheBetsCanFulfill(uint256 _randomness) public returns(bool) {
+		if(!randomHasBeenCorrectlyCalculated(_randomness)) {
 			emit ReceivedRandomness(false, 0);
 			require(_randomness > 0, "Random number not found");
 		} 
+	}
 
+	function randomHasBeenCorrectlyCalculated(uint256 _randomness) public returns(bool) {
+		return _randomness != lastRandom && _randomness != 0;
+	}	
+	
+	function updateRandomNumber(uint256 _randomness) private {
 		lastRandom = _randomness;
 		emit ReceivedRandomness(true, lastRandom);
-		
-		calcDiceValues();
-		fulfillPassLines();
 	}
 	
 	// The number as string has length 78,
@@ -97,6 +120,10 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 		diceSum = dice1value + dice2value;
 		timesRolledTheDices++;
 	}
+	
+	function fulfillBets() private {
+		fulfillPassLines();
+	}
 
 	function fulfillPassLines() private {
 		for (uint i = 0; i < currentPlayers; i++) {
@@ -109,22 +136,25 @@ contract PolydiceGameV2 is VRFConsumerBase, Ownable {
 	// TODO implement a banking system (to fix what haappens on the
 	// nested if)
 	function fulfillPassLine(address payable player) private {
-		if (diceSum == 7 || diceSum == 11) {
+		if (hasWonPassLine(player)) {
 			if(address(this).balance < passLineBetAmounts[player] * 2){
 				player.transfer(address(this).balance);		
 			}
-			else {
-				player.transfer(passLineBetAmounts[player] * 2);
-			}
 			passLineBetAmounts[player] = 0;
-		} else if(diceSum == 2 || diceSum == 3 || diceSum == 12) {
+		} else if(hasLostPassLine(player)) {
 			passLineBetAmounts[player] = 0;
 		} else {
 			// TODO add here the on/off shit
 		}
 	}
 
+	function hasWonPassLine(address player) private returns(bool) {
+		return diceSum == 7 || diceSum == 11;
+	}
 
+	function hasLostPassLine(address player) private returns(bool) {
+		return diceSum == 2 || diceSum == 3 || diceSum == 12;
+	}
 
 
 }
