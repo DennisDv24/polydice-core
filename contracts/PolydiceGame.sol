@@ -47,9 +47,8 @@ contract PolydiceGame is VRFConsumerBase, Ownable {
 	
 
 	function passLineBet() public payable {
-		if(!isOnPlayers(msg.sender)) {
+		if(!isOnPlayers(msg.sender))
 			addToPlayers(msg.sender);
-		}
 		passLineBetAmounts[msg.sender] += msg.value;
 	}
 
@@ -126,24 +125,18 @@ contract PolydiceGame is VRFConsumerBase, Ownable {
 	}
 
 	function fulfillPassLines() private {
-		for (uint i = 0; i < currentPlayers; i++) {
+		for (uint i = 0; i < currentPlayers; i++) 
 			fulfillPassLine(passLinePlayers[i]);
-		}	
 	}
 	
 
-	// TODO refactor into a "gotCrabs" function or something
-	// TODO implement a banking system (to fix what haappens on the
-	// nested if)
 	function fulfillPassLine(address payable player) private {
 		if (hasWonPassLine(player)) {
-			if(address(this).balance < passLineBetAmounts[player] * 2){
-				player.transfer(address(this).balance);		
-			}
+			player.transfer(passLineBetAmounts[player] * 2);
 			passLineBetAmounts[player] = 0;
-		} else if(hasLostPassLine(player)) {
+		} else if(hasLostPassLine(player)) 
 			passLineBetAmounts[player] = 0;
-		} else {
+		else {
 			// TODO add here the on/off shit
 		}
 	}
