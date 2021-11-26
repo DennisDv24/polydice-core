@@ -15,6 +15,12 @@ networks:
     keyhash: '0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da'
     fee: 100000000000000  
     verify: False
+  polygon-main:
+    link_token: '0xb0897686c545045aFc77CF20eC7A532E3120E0F1'
+    vrf_coordinator: '0x3d2341ADb2D31f1c5530cDC622016af293177AE0'
+    keyhash: '0xf86195cf7690c55907b2b611ebb7343a6f649bff128701cc542f0569e2c549da'
+    fee: 100000000000000  
+    verify: True
   polygon-test-fork:
     link_token: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB'
     vrf_coordinator: '0x8C7382F9D8f56b33781fE506E897a4F1e2d17255'

@@ -23,7 +23,12 @@ contract GameController is VRFConsumerBase, Ownable {
 	event RequestedRandomness(bytes32 requestId);
 	event ReceivedRandomness(bool hasArrived, uint256 random);
 	event DicesForRandomNumber(uint256 random, uint8 dice1, uint8 dice2);
-
+	
+	/** 
+	 * @dev an user friendly constructor will be implementend
+	 * into a functionality of "MasterController.sol", wich
+	 * will be the main contract for the dapp.
+	 */
 	constructor(
 		address _vrfCoordinator,
 		address _link,
