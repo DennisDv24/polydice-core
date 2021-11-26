@@ -14,7 +14,7 @@ import pytest
 
 def test_deploy_GameController_with_PolydiceGame():
 
-    if(not in_local_network(network.show_active())):
+    if not in_local_network(network.show_active()):
         skip_unit_test()
 
     game_master_acc = get_account()
@@ -24,7 +24,7 @@ def test_deploy_GameController_with_PolydiceGame():
 
 def test_bank_fundings():
 
-    if(not in_local_network(network.show_active())):
+    if not in_local_network(network.show_active()):
         skip_unit_test()
 
     game_master_acc = get_account()
